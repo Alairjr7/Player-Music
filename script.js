@@ -1,3 +1,4 @@
+// Seleciona os elementos HTML necessários para manipulação
 const Musica = document.getElementById("musica");
 const BotaoIniciarMusica = document.getElementById("player-music");
 const BotaoPausarMusica = document.getElementById("pause-music");
@@ -8,12 +9,8 @@ const TempoFinal = document.getElementById("end-time");
 const FotoMusica = document.getElementById("img-info");
 const NomeDaMusica = document.getElementById("music");
 const BotaoVoltarMusica = document.getElementById("back-container");
-BotaoIniciarMusica.addEventListener("click", IniciarMusica);
 
-BotaoPausarMusica.addEventListener("click", PausarMusica);
-
-Musica.addEventListener("timeupdate", MoverBarra);
-
+// Lista de músicas disponíveis com suas informações (banda, título, caminho do áudio e imagem)
 let Musicas = [
   {
     band: "Kansas",
@@ -35,76 +32,87 @@ let Musicas = [
   },
 ];
 
+// Índice da música atual na lista
 let indexMusica = 0;
 
-
-
+// Avança para a próxima música ao clicar no botão "Next"
 BotaoPassarMusica.addEventListener("click", () => {
-  indexMusica++;
+  indexMusica++; // Incrementa o índice
   if (indexMusica > Musicas.length - 1) {
-    indexMusica = 0;
+    indexMusica = 0; // Volta ao início se passar da última música
   }
-  RenderizarMusica(indexMusica);
+  RenderizarMusica(indexMusica); // Atualiza a interface com a nova música
+  // Exibe o botão de pause e oculta o botão de play
   if ((BotaoIniciarMusica.style.display = "flex")) {
     BotaoIniciarMusica.style.display = "none";
     BotaoPausarMusica.classList.add("active");
   }
 });
 
+// Volta para a música anterior ao clicar no botão "Back"
 BotaoVoltarMusica.addEventListener("click", () => {
   if (indexMusica <= 0) {
-    indexMusica = Musicas.length;
+    indexMusica = Musicas.length; // Vai para a última música se estiver na primeira
   }
-  indexMusica--;
-  RenderizarMusica(indexMusica);
+  indexMusica--; // Decrementa o índice
+  RenderizarMusica(indexMusica); // Atualiza a interface com a nova música
+  // Exibe o botão de pause e oculta o botão de play
   if ((BotaoIniciarMusica.style.display = "flex")) {
     BotaoIniciarMusica.style.display = "none";
     BotaoPausarMusica.classList.add("active");
   }
 });
 
+// Inicia a reprodução da música atual
 function IniciarMusica() {
-  Musica.play();
-  BotaoPausarMusica.classList.add("active");
-  BotaoIniciarMusica.style.display = "none";
+  Musica.play(); // Começa a tocar a música
+  BotaoPausarMusica.classList.add("active"); // Mostra o botão de pause
+  BotaoIniciarMusica.style.display = "none"; // Oculta o botão de play
 }
 
+// Pausa a reprodução da música atual
 function PausarMusica() {
-  Musica.pause();
-  BotaoPausarMusica.classList.remove("active");
-  BotaoIniciarMusica.style.display = "flex";
+  Musica.pause(); // Pausa a música
+  BotaoPausarMusica.classList.remove("active"); // Esconde o botão de pause
+  BotaoIniciarMusica.style.display = "flex"; // Exibe o botão de play
 }
 
+// Atualiza a barra de progresso e os tempos de reprodução
 function MoverBarra() {
-  let Barra = document.getElementById("progress");
-  let PosiçãoBarra = Math.floor((Musica.currentTime / Musica.duration) * 100) + "%";
-  Barra.style.width = PosiçãoBarra;
-  const TempoInicial = document.getElementById("start-time");
-  let TempoDecorridoEmSegundos = SegundosParaMinutos(
-    Math.floor(Musica.currentTime)
-  );
-  TempoInicial.innerHTML = TempoDecorridoEmSegundos;
-  TempoFinal.innerHTML = SegundosParaMinutos(Math.floor(Musica.duration));
-  TempoFinal.innerHTML = SegundosParaMinutos(Math.floor(Musica.duration));
-  
+  let Barra = document.getElementById("progress"); // Seleciona a barra de progresso
+  let PosiçãoBarra = Math.floor((Musica.currentTime / Musica.duration) * 100) + "%"; // Calcula a posição atual
+  Barra.style.width = PosiçãoBarra; // Atualiza a largura da barra
+  const TempoInicial = document.getElementById("start-time"); // Seleciona o tempo inicial
+  let TempoDecorridoEmSegundos = SegundosParaMinutos(Math.floor(Musica.currentTime)); // Converte o tempo atual para minutos e segundos
+  TempoInicial.innerHTML = TempoDecorridoEmSegundos; // Atualiza o tempo inicial na interface
+  TempoFinal.innerHTML = SegundosParaMinutos(Math.floor(Musica.duration)); // Atualiza o tempo final na interface
 }
 
+// Converte segundos em formato "minutos:segundos"
 function SegundosParaMinutos(segundos) {
-  let CampoMinutos = Math.floor(segundos / 60);
-  let CampoSegundos = segundos % 60;
+  let CampoMinutos = Math.floor(segundos / 60); // Calcula os minutos
+  let CampoSegundos = segundos % 60; // Calcula os segundos restantes
   if (CampoSegundos < 10) {
-    CampoSegundos = `0${CampoSegundos}`;
+    CampoSegundos = `0${CampoSegundos}`; // Adiciona um zero à esquerda se necessário
   }
-  return `${CampoMinutos}:${CampoSegundos}`;
+  return `${CampoMinutos}:${CampoSegundos}`; // Retorna o tempo formatado
 }
 
+// Renderiza a música atual na interface
 function RenderizarMusica(index) {
-  Musica.setAttribute("src", Musicas[index].src);
+  Musica.setAttribute("src", Musicas[index].src); // Define a nova fonte de áudio
   Musica.addEventListener("loadeddata", () => {
-    NomeDaBanda.innerHTML = Musicas[index].band;
-    NomeDaMusica.innerHTML = Musicas[index].music;
-    FotoMusica.src = Musicas[index].imgscr;
+    NomeDaBanda.innerHTML = Musicas[index].band; // Atualiza o nome da banda
+    NomeDaMusica.innerHTML = Musicas[index].music; // Atualiza o nome da música
+    FotoMusica.src = Musicas[index].imgscr; // Atualiza a imagem da música
   });
-  Musica.load();
-  Musica.play();
+  Musica.load(); // Carrega a nova música
+  Musica.play(); // Inicia a reprodução automaticamente
 }
+
+// Adiciona eventos para iniciar e pausar a música quando os botões correspondentes forem clicados
+BotaoIniciarMusica.addEventListener("click", IniciarMusica);
+BotaoPausarMusica.addEventListener("click", PausarMusica);
+
+// Atualiza a barra de progresso conforme a música toca
+Musica.addEventListener("timeupdate", MoverBarra);
